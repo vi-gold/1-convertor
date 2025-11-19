@@ -69,8 +69,8 @@ func calculateOperation(arrayNum []float64, operation string) (result float64) {
 		if len(arrayNum)%2 == 1 {
 			result = arrayNum[len(arrayNum)/2]
 		} else {
-			median1 := arrayNum[len(arrayNum)-1]
-			median2 := arrayNum[len(arrayNum)]
+			median1 := arrayNum[len(arrayNum)/2-1]
+			median2 := arrayNum[len(arrayNum)/2]
 			result = (median1 + median2) / 2
 		}
 	}
