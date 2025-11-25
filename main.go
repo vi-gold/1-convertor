@@ -24,7 +24,7 @@ func main() {
 	// const rubToUsd float64 = 1 / usdToRub
 	// const rubToEur float64 = 1 / eurToRub
 	originCurrency, targetCurrency, sum := getUserInput()
-	result := convert(originCurrency, targetCurrency, sum, conv)
+	result := convert(originCurrency, targetCurrency, sum, &conv)
 	fmt.Printf("Конвертация суммы %.2f%s в %s равна %.2f\n",
 		sum, originCurrency, targetCurrency, result)
 }
@@ -104,8 +104,8 @@ func getAvailableCurrencies(originCurrency string) (availableCurrencies string) 
 	return availableCurrencies
 }
 
-func convert(originCurrency, targetCurrency string, sum float64, conv testMap) (result float64) {
-	result = conv[originCurrency][targetCurrency] * sum
+func convert(originCurrency, targetCurrency string, sum float64, conv *testMap) (result float64) {
+	result = (*conv)[originCurrency][targetCurrency] * sum
 	return result
 	// switch {
 	// case originCurrency == "usd":
