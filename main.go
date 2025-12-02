@@ -5,16 +5,26 @@ import (
 	"fmt"
 )
 
+type usdMap = map[string]float64
+type eurMap = map[string]float64
+type rubMap = map[string]float64
+type testMap = map[string]map[string]float64
+
 func main() {
-	const usdToEur float64 = 0.86
-	const usdToRub float64 = 80.87
-	const eurToRub float64 = usdToRub / usdToEur
-	const eurToUsd float64 = eurToRub / usdToRub
-	const rubToUsd float64 = 1 / usdToRub
-	const rubToEur float64 = 1 / eurToRub
+
+	usd := usdMap{"eur": 0.86, "rub": 80.87}
+	eur := eurMap{"rub": usd["rub"] / usd["eur"], "usd": usd["rub"] / usd["eur"] / usd["rub"]}
+	rub := rubMap{"usd": 1 / usd["rub"], "eur": 1 / eur["rub"]}
+	conv := testMap{"usd": usd, "eur": eur, "rub": rub}
+
+	// const usdToEur float64 = 0.86
+	// const usdToRub float64 = 80.87
+	// const eurToRub float64 = usdToRub / usdToEur
+	// const eurToUsd float64 = eurToRub / usdToRub
+	// const rubToUsd float64 = 1 / usdToRub
+	// const rubToEur float64 = 1 / eurToRub
 	originCurrency, targetCurrency, sum := getUserInput()
-	result := convert(originCurrency, targetCurrency, sum,
-		usdToEur, usdToRub, eurToRub, eurToUsd, rubToUsd, rubToEur)
+	result := convert(originCurrency, targetCurrency, sum, &conv)
 	fmt.Printf("Конвертация суммы %.2f%s в %s равна %.2f\n",
 		sum, originCurrency, targetCurrency, result)
 }
@@ -94,30 +104,30 @@ func getAvailableCurrencies(originCurrency string) (availableCurrencies string) 
 	return availableCurrencies
 }
 
-func convert(originCurrency, targetCurrency string, sum,
-	usdToEur, usdToRub, eurToRub, eurToUsd, rubToUsd, rubToEur float64) (result float64) {
-	switch {
-	case originCurrency == "usd":
-		switch {
-		case targetCurrency == "rub":
-			result = usdToRub * sum
-		case targetCurrency == "eur":
-			result = usdToEur * sum
-		}
-	case originCurrency == "eur":
-		switch {
-		case targetCurrency == "usd":
-			result = eurToUsd * sum
-		case targetCurrency == "rub":
-			result = eurToRub * sum
-		}
-	case originCurrency == "rub":
-		switch {
-		case targetCurrency == "usd":
-			result = rubToUsd * sum
-		case targetCurrency == "eur":
-			result = rubToEur * sum
-		}
-	}
+func convert(originCurrency, targetCurrency string, sum float64, conv *testMap) (result float64) {
+	result = (*conv)[originCurrency][targetCurrency] * sum
 	return result
+	// switch {
+	// case originCurrency == "usd":
+	// 	switch {
+	// 	case targetCurrency == "rub":
+	// 		result = usdToRub * sum
+	// 	case targetCurrency == "eur":
+	// 		result = usdToEur * sum
+	// 	}
+	// case originCurrency == "eur":
+	// 	switch {
+	// 	case targetCurrency == "usd":
+	// 		result = eurToUsd * sum
+	// 	case targetCurrency == "rub":
+	// 		result = eurToRub * sum
+	// 	}
+	// case originCurrency == "rub":
+	// 	switch {
+	// 	case targetCurrency == "usd":
+	// 		result = rubToUsd * sum
+	// 	case targetCurrency == "eur":
+	// 		result = rubToEur * sum
+	// 	}
+	// }
 }
